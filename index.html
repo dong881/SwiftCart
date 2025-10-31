@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SwiftCart - 智慧購物比價平台</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🛒 SwiftCart</h1>
+            <p class="subtitle">整合蝦皮、PChome、Momo 的智慧購物比價平台</p>
+        </header>
+
+        <main>
+            <div class="search-section">
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="輸入商品名稱搜尋..." />
+                    <button id="searchBtn" onclick="searchProducts()">🔍 搜尋</button>
+                </div>
+                <div class="search-options">
+                    <label>
+                        <input type="checkbox" id="includeShoppe" checked> 蝦皮
+                    </label>
+                    <label>
+                        <input type="checkbox" id="includePchome" checked> PChome
+                    </label>
+                    <label>
+                        <input type="checkbox" id="includeMomo" checked> Momo
+                    </label>
+                </div>
+            </div>
+
+            <div id="loading" class="loading hidden">
+                <div class="spinner"></div>
+                <p>正在搜尋商品並分析評論...</p>
+            </div>
+
+            <div id="error" class="error-message hidden"></div>
+
+            <div id="results" class="results-section hidden">
+                <h2>🏆 推薦商品 Top 5</h2>
+                <div id="productList" class="product-list"></div>
+            </div>
+
+            <div class="info-section">
+                <h3>✨ 功能特色</h3>
+                <ul class="features">
+                    <li>🔄 整合多個購物平台（蝦皮、PChome、Momo）</li>
+                    <li>💰 智慧價格合理性分析</li>
+                    <li>🤖 AI 評論可信度辨識</li>
+                    <li>⭐ 評價優劣智慧判斷</li>
+                    <li>🎯 精準推薦 Top 5 商品</li>
+                </ul>
+            </div>
+        </main>
+
+        <footer>
+            <p>Powered by Gemini AI | SwiftCart © 2024</p>
+        </footer>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
