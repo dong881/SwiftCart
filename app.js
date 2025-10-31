@@ -2,7 +2,7 @@
 const CONFIG = {
     // API key will be injected during build time by GitHub Actions
     GEMINI_API_KEY: 'GEMINI_API_KEY_PLACEHOLDER',
-    GEMINI_API_URL: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent'
+    GEMINI_API_URL: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent'
 };
 
 // Mock product data for different platforms
@@ -126,10 +126,11 @@ ${products.map((p, i) => `${i+1}. ${p.platformName} - ${p.name} - $${p.price} - 
   ]
 }`;
 
-        const response = await fetch(`${CONFIG.GEMINI_API_URL}?key=${CONFIG.GEMINI_API_KEY}`, {
+        const response = await fetch(CONFIG.GEMINI_API_URL, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'x-goog-api-key': CONFIG.GEMINI_API_KEY
             },
             body: JSON.stringify({
                 contents: [{
@@ -174,6 +175,8 @@ ${products.map((p, i) => `${i+1}. ${p.platformName} - ${p.name} - $${p.price} - 
     } catch (err) {
         console.error('AI analysis error:', err);
         console.warn('Falling back to mock analysis');
+        // Optionally show a subtle notification to user
+        showInfo('使用本地分析模式（AI 服務暫時無法使用）');
     }
     
     return performMockAnalysis(products);
@@ -182,10 +185,18 @@ ${products.map((p, i) => `${i+1}. ${p.platformName} - ${p.name} - $${p.price} - 
 // Perform mock analysis when AI is not available
 function performMockAnalysis(products) {
     return products.map(product => {
-        // Calculate scores based on rating and reviews
-        const priceScore = Math.round(70 + Math.random() * 25);
-        const trustScore = Math.round(product.rating * 18 + (product.reviews / 20));
-        const overallScore = Math.round((priceScore + trustScore + product.rating * 15) / 3);
+        // Calculate scores based on rating and reviews using deterministic algorithm
+        const reviewWeight = Math.min(product.reviews / 1000, 1); // Normalize reviews to 0-1
+        const ratingWeight = product.rating / 5; // Normalize rating to 0-1
+        
+        // Price score: higher reviews and ratings tend to justify price
+        const priceScore = Math.round(70 + (reviewWeight * 15) + (ratingWeight * 15));
+        
+        // Trust score: combination of rating and review count
+        const trustScore = Math.round((ratingWeight * 60) + (reviewWeight * 40));
+        
+        // Overall score: weighted combination
+        const overallScore = Math.round((priceScore * 0.3) + (trustScore * 0.4) + (product.rating * 6));
         
         return {
             ...product,
@@ -316,6 +327,24 @@ function showError(message) {
     setTimeout(() => {
         error.classList.add('hidden');
     }, 5000);
+}
+
+// Show info message
+function showInfo(message) {
+    const error = document.getElementById('error');
+    error.style.background = '#e3f2fd';
+    error.style.color = '#1976d2';
+    error.style.borderLeftColor = '#1976d2';
+    error.textContent = message;
+    error.classList.remove('hidden');
+    
+    setTimeout(() => {
+        error.classList.add('hidden');
+        // Reset styles
+        error.style.background = '';
+        error.style.color = '';
+        error.style.borderLeftColor = '';
+    }, 3000);
 }
 
 // Allow search on Enter key
