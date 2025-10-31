@@ -45,3 +45,6 @@ env/
 # Logs
 logs/
 *.log
+
+# Test files
+test.js
